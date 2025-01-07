@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import Loader from "./Loader";
+import { TransactionContext } from "../contextStore/TransactionContext";
 
 const Input = ({ name, type, value, placeHolder, handleChange }) => (
   <input
     placeholder={placeHolder}
     type={type}
+    value={value}
     step="0.00001"
-    value={(e) => handleChange(e, name)}
+    onChange={(e) => handleChange(e, name)}
     className="my-2 w-full rounded-sm p-2 outline-none bg-transparent text-white border-none text-sm white-glassmorphism"
   />
 );
@@ -17,11 +19,23 @@ const commonClasses =
   "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
 const Welcome = () => {
+  const {
+    connectWallet,
+    currentAccount,
+    formData,
+    sendTransactionData,
+    handleInputChange,
+  } = useContext(TransactionContext);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
-  const connectWallet = () => {};
-  const handleSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { addressTo, amount, message, keyword } = formData;
+    if (!addressTo || !amount || !message || !keyword) return;
+    sendTransactionData();
+  };
 
   return (
     <div className="flex w-full justify-center items-center">
@@ -34,13 +48,15 @@ const Welcome = () => {
           <p className="text-left text-white mt-5 font-light md:w-9/12 w-11/12 text-base">
             Explore the crypto world. Send and Recieve cruptocurrencies
           </p>
-          <button
-            type="button"
-            onClick={connectWallet}
-            className="flex justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full hover:bg-[#2546bt] cursor-pointer"
-          >
-            <span className="text-white font-semibold">Connect Button</span>
-          </button>
+          {!currentAccount && (
+            <button
+              type="button"
+              onClick={connectWallet}
+              className="flex justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full hover:bg-[#2546bt] cursor-pointer"
+            >
+              <span className="text-white font-semibold">Connect Wallet</span>
+            </button>
+          )}
           <h1 className="text-gradient-krypt mt-10 text-2xl max-sm:text-xl text-center mb-5">
             KRYPT PROVIDES
           </h1>
@@ -85,28 +101,32 @@ const Welcome = () => {
           </div>
           <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
             <Input
-              name="address"
+              name="addressTo"
               type="text"
+              value={formData.addressTo}
               placeHolder="Address To"
-              handleChange={() => {}}
+              handleChange={handleInputChange}
             />
             <Input
               name="amount"
               type="number"
+              value={formData.amount}
               placeHolder="Amount (ETH)"
-              handleChange={() => {}}
+              handleChange={handleInputChange}
             />
             <Input
-              name="Keyword (GIF)"
+              name="keyword"
               type="text"
-              placeHolder="keyword"
-              handleChange={() => {}}
+              value={formData.keyword}
+              placeHolder="Keyword (GIF)"
+              handleChange={handleInputChange}
             />
             <Input
-              name="Enter Message"
+              name="message"
               type="text"
-              placeHolder="message"
-              handleChange={() => {}}
+              value={formData.message}
+              placeHolder="Enter Message"
+              handleChange={handleInputChange}
             />
 
             <div className="h-[1px] w-full bg-gray-400 my-2" />
