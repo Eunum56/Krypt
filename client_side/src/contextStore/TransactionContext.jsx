@@ -93,7 +93,6 @@ export const TransactionProvider = ({ children }) => {
       const receipt = await provider.waitForTransaction(
         transactionResponse.hash
       );
-      console.log("Transaction receipt:", receipt);
       console.log(`Transaction confirmed: HASH ${receipt.hash}`);
       setIsLoading(false);
 

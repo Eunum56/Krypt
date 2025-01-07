@@ -23,7 +23,7 @@ const Navbar = () => {
           <NavBarItem key={index} title={item} />
         ))}
         <li className="bg-[#2952e3] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd] flex gap-2 justify-center items-center">
-          connect wallet <CiWallet />
+          Login <CiWallet />
         </li>
       </ul>
       <div className="flex relative">
