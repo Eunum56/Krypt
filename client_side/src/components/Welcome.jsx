@@ -3,6 +3,7 @@ import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import Loader from "./Loader";
 import { TransactionContext } from "../contextStore/TransactionContext";
+import { shortAddress } from "../utils/constants";
 
 const Input = ({ name, type, value, placeHolder, handleChange }) => (
   <input
@@ -92,7 +93,9 @@ const Welcome = () => {
                 <BsInfoCircle fontSize={17} color="#fff" />
               </div>
               <div>
-                <p className="text-white font-light text-sm">address</p>
+                <p className="text-white font-light text-sm">
+                  {shortAddress(currentAccount)}
+                </p>
                 <p className="text-white font-semibold text-lg mt-1">
                   Ethereum
                 </p>
