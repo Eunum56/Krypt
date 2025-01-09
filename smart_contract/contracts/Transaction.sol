@@ -51,4 +51,11 @@ contract Transaction {
             _keyword
         );
     }
+    function getAllTransactions()
+        public
+        view
+        returns (TransferStruct[] memory)
+    {
+        return transactions;
+    }
 }

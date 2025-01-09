@@ -1,4 +1,4 @@
-export const TransactionSCA = "0xf40ABaC94354195cD8789C943d7d4a2914Fa410e";
+export const TransactionSCA = "0xc97FE5b087f87f861C1c4406BE3BDEdB3A253084";
 
 export const TransactionABI = [
     {
@@ -70,6 +70,51 @@ export const TransactionABI = [
         "name": "addToBlockchain",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getAllTransactions",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "message",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "keyword",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct Transaction.TransferStruct[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

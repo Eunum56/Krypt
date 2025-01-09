@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import { TransactionABI, TransactionSCA } from "../utils/TransactionSC";
-import { ethers, parseEther, BrowserProvider } from "ethers";
+import { ethers, parseEther, BrowserProvider, formatUnits } from "ethers";
 
 const { ethereum } = window;
 
@@ -30,6 +30,7 @@ export const TransactionProvider = ({ children }) => {
     keyword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [transactionsArray, setTransactionsArray] = useState([]);
 
   const checkWallet = async () => {
     try {
@@ -39,6 +40,8 @@ export const TransactionProvider = ({ children }) => {
 
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
+
+        fetchTransactions();
       } else {
         console.log("No accounts found");
       }
@@ -67,6 +70,28 @@ export const TransactionProvider = ({ children }) => {
     setFormData((prevState) => ({ ...prevState, [name]: e.target.value }));
   };
 
+  const fetchTransactions = async () => {
+    try {
+      const provider = new BrowserProvider(ethereum);
+      const signer = await provider.getSigner();
+      const transactionContract = getTransactionContract(signer);
+      const transactionsArrayResult =
+        await transactionContract.getAllTransactions();
+      const decodedTransactions = transactionsArrayResult.map((tx) => ({
+        addressFrom: tx.from,
+        addressTo: tx.to,
+        amount: Number(formatUnits(tx.amount, 18)), // If using BigNumber, convert to string
+        message: tx.message,
+        timestamp: new Date(tx.timestamp.toString() * 1000).toLocaleString(), // Convert timestamp if needed
+        keyword: tx.keyword,
+      }));
+
+      setTransactionsArray(decodedTransactions);
+    } catch (error) {
+      console.error("An error occurred while fetching transactions:", error);
+    }
+  };
+
   const sendTransactionData = async () => {
     try {
       if (!ethereum) return alert("Install MetaMask");
@@ -82,19 +107,14 @@ export const TransactionProvider = ({ children }) => {
         to: addressTo,
         value: parsedAmount,
       };
-
+      setIsLoading(true);
       const transactionResponse = await signer.sendTransaction(
         transactionRequest
       );
-      //   console.log(transactionResponse);
 
-      console.log(`Transaction sent: ${transactionResponse.hash}`);
-      setIsLoading(true);
       const receipt = await provider.waitForTransaction(
         transactionResponse.hash
       );
-      console.log(`Transaction confirmed: HASH ${receipt.hash}`);
-      setIsLoading(false);
 
       const transactionContract = getTransactionContract(signer);
       const transactionHash = await transactionContract.addToBlockchain(
@@ -104,11 +124,21 @@ export const TransactionProvider = ({ children }) => {
         keyword
       );
 
-      console.log(`Smart contract transaction hash: ${transactionHash.hash}`);
       await transactionHash.wait();
+      setIsLoading(false);
+      setFormData({
+        addressTo: "",
+        amount: "",
+        message: "",
+        keyword: "",
+      });
+      fetchTransactions();
     } catch (error) {
       console.error("Transaction failed:", error);
+      setIsLoading(false);
       alert("Transaction failed");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -124,6 +154,8 @@ export const TransactionProvider = ({ children }) => {
         formData,
         sendTransactionData,
         handleInputChange,
+        transactionsArray,
+        isLoading,
       }}
     >
       {children}

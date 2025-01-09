@@ -26,9 +26,9 @@ const Welcome = () => {
     formData,
     sendTransactionData,
     handleInputChange,
+    isLoading,
   } = useContext(TransactionContext);
 
-  const [isLoading, setIsLoading] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
   const handleSubmit = (e) => {
@@ -39,7 +39,7 @@ const Welcome = () => {
   };
 
   return (
-    <div className="flex w-full justify-center items-center">
+    <div className="flex justify-center items-center">
       <div className="flex md:flex-row flex-col items-start justify-between md:p-20 py-14 px-4">
         <div className="flex flex-1 justify-start flex-col mf:mr-10">
           <h1 className="text-3xl sm:text-5xl text-white text-gradient py-1">
